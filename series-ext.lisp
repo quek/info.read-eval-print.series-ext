@@ -249,11 +249,10 @@ Evaluation took:
 |#
 
 
-
 (defmacro sdefpackage (package &rest options)
   `(progn
      (defpackage ,package
        ,@options
-       (:use :series)
+       (:use :series :info.read-eval-print.series-ext)
        (:shadowing-import-from :series ,@series::/series-forms/))
      (series::install :pkg ,package :implicit-map t)))
