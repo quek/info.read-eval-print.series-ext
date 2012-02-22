@@ -3,6 +3,8 @@
   :version "0.0.0"
   :serial t
   :components ((:file "package")
-               (:file "series-ext"))
+               (:file "series-ext")
+               (:file "fset"))
   :depends-on (series
-               cl-ppcre))
+               cl-ppcre
+               fset))
