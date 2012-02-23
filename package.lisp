@@ -18,7 +18,8 @@
                            #:scan-fset
                            #:scan-map
                            #:collect-fset
-                           #:collect-map)))))
+                           #:collect-map
+                           #:scan-file-change)))))
   (m))
 
 (series::install :pkg :info.read-eval-print.series-ext :implicit-map t)

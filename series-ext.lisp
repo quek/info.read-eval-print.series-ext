@@ -49,12 +49,12 @@ d"))))
 #|
 (time (dotimes (i 10 nil) (scan-line2 "/usr/share/dict/words")))
 Evaluation took:
-  1.378 seconds of real time
-  1.380086 seconds of total run time (1.216076 user, 0.164010 system)
-  [ Run times consist of 0.768 seconds GC time, and 0.613 seconds non-GC time. ]
-  100.15% CPU
-  2,474,309,529 processor cycles
-  170,590,784 bytes consed
+1.378 seconds of real time
+1.380086 seconds of total run time (1.216076 user, 0.164010 system)
+[ Run times consist of 0.768 seconds GC time, and 0.613 seconds non-GC time. ]
+100.15% CPU
+2,474,309,529 processor cycles
+170,590,784 bytes consed
 |#
 
 (series::defS scan-line (name &optional (external-format :default))
@@ -104,11 +104,11 @@ Evaluation took:
 #|
 (time (dotimes (i 10 nil) (scan-line "/usr/share/dict/words")))
 Evaluation took:
-  0.569 seconds of real time
-  0.560035 seconds of total run time (0.492031 user, 0.068004 system)
-  [ Run times consist of 0.256 seconds GC time, and 0.305 seconds non-GC time. ]
-  98.42% CPU
-  1,021,365,135 processor cycles
+0.569 seconds of real time
+0.560035 seconds of total run time (0.492031 user, 0.068004 system)
+[ Run times consist of 0.256 seconds GC time, and 0.305 seconds non-GC time. ]
+98.42% CPU
+1,021,365,135 processor cycles
 75,932,032 bytes consed
 |#
 
@@ -256,3 +256,50 @@ Evaluation took:
        (:use :series :info.read-eval-print.series-ext)
        (:shadowing-import-from :series ,@series::/series-forms/))
      (series::install :pkg ,package :implicit-map t)))
+
+(defun collect-file-write-date-map (path)
+  (let ((file (scan-directory path)))
+    (collect-map file (file-write-date file))))
+
+(series::defS scan-file-change (path &key (interval 1))
+  "(scan-file-change path [:interval 1])"
+  (series::fragl
+   ;; args
+   ((path) (interval))
+   ;; rets
+   ((file t))
+   ;; aux
+   ((map fset:map)
+    (file t)
+    (new-wirte-date t)
+    (old-write-date t)
+    (files t))
+   ;; alt
+   ()
+   ;; prolog
+   ((setq map (collect-file-write-date-map path))
+    (sleep interval)
+    (setq files (generator (scan-directory path))))
+   ;; body
+   (L
+    (setq file (next-in files))
+    (unless file
+      (sleep interval)
+      (setq files (generator (scan-directory path)))
+      (setq file (next-in files)))
+    (setq old-write-date (fset:@ map file))
+    (setq new-wirte-date (file-write-date file))
+    (if (and old-write-date (= old-write-date new-wirte-date))
+        (go L)
+        (setq map (fset:with map file new-wirte-date))))
+   ;; epilog
+   ()
+   ;; wraprs
+   ()
+   ;; impure
+   nil))
+#|
+(collect-ignore
+ (subseries (format t "~&~a !!!!!!!!!!!!" (scan-file-change "/tmp/*.*"))
+            0 3))
+|#
