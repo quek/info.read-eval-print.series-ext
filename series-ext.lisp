@@ -282,11 +282,10 @@ Evaluation took:
     (setq files (generator (scan-directory path))))
    ;; body
    (L
-    (setq file (next-in files))
-    (unless file
-      (sleep interval)
-      (setq files (generator (scan-directory path)))
-      (setq file (next-in files)))
+    (setq file (next-in files
+                        (sleep interval)
+                        (setq files (generator (scan-directory path)))
+                        (next-in files)))
     (setq old-write-date (fset:@ map file))
     (setq new-wirte-date (file-write-date file))
     (if (and old-write-date (= old-write-date new-wirte-date))
@@ -302,4 +301,6 @@ Evaluation took:
 (collect-ignore
  (subseries (format t "~&~a !!!!!!!!!!!!" (scan-file-change "/tmp/*.*"))
             0 3))
+(collect (subseries (scan-file-change "/tmp/*.*") 0 3))
+;;=> (#P"/tmp/a.txt" #P"/tmp/.#a.txt" #P"/tmp/a.txt")
 |#
