@@ -14,7 +14,11 @@
                   (:shadowing-import-from :series ,@series::/series-forms/)
                   (:import-from :series ,@series-symbols)
                   (:export ,@series-symbols
-                           ,@export-symbols)))))
+                           ,@export-symbols
+                           #:scan-fset
+                           #:scan-map
+                           #:collect-fset
+                           #:collect-map)))))
   (m))
 
 (series::install :pkg :info.read-eval-print.series-ext :implicit-map t)
