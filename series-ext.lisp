@@ -287,8 +287,9 @@ Evaluation took:
                         (setq files (generator (scan-directory path)))
                         (next-in files)))
     (setq old-write-date (fset:@ map file))
-    (setq new-wirte-date (file-write-date file))
-    (if (and old-write-date (= old-write-date new-wirte-date))
+    (setq new-wirte-date (ignore-errors (file-write-date file)))
+    (if (and old-write-date new-wirte-date
+             (= old-write-date new-wirte-date))
         (go L)
         (setq map (fset:with map file new-wirte-date))))
    ;; epilog
