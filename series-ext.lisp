@@ -255,7 +255,7 @@ Evaluation took:
        ,@options
        (:use :series :info.read-eval-print.series-ext)
        (:shadowing-import-from :series ,@series::/series-forms/))
-     (series::install :pkg ,package :implicit-map t)))
+     (series::install :pkg ,package :implicit-map t :macro nil)))
 
 (defun collect-file-write-date-map (path)
   (let ((file (scan-directory path)))
