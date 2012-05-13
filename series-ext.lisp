@@ -305,3 +305,90 @@ Evaluation took:
 (collect (subseries (scan-file-change "/tmp/*.*") 0 3))
 ;;=> (#P"/tmp/a.txt" #P"/tmp/.#a.txt" #P"/tmp/a.txt")
 |#
+
+
+(series::defS scan-apply (function &rest args)
+  "(scan-funcall function &rest args)"
+  (series::fragl
+   ;; args
+   ((function) (args))
+   ;; rets
+   ((item t))
+   ;; aux
+   ((item t))
+   ;; alt
+   ()
+   ;; prolog
+   ()
+   ;; body
+   ((setq item (apply function args)))
+   ;; epilog
+   ()
+   ;; wraprs
+   ()
+   ;; impure
+   nil))
+
+(series::defS scan-apply-while (function &rest args)
+  "(scan-funcall function &rest args)"
+  (series::fragl
+   ;; args
+   ((function) (args))
+   ;; rets
+   ((item t))
+   ;; aux
+   ((item t))
+   ;; alt
+   ()
+   ;; prolog
+   ()
+   ;; body
+   ((setq item (apply function args))
+    (unless item (go series::end)))
+   ;; epilog
+   ()
+   ;; wraprs
+   ()
+   ;; impure
+   nil))
+
+(defun scan-combination-generator (n items)
+  (labels ((next (data acc)
+             (if (endp data)
+                 (nreverse acc)
+                 (let ((x (cdar data))
+                       (xs (cdr data)))
+                   (cond (x
+                          (append (nreverse acc) (cons x xs)))
+                         (xs
+                          (next xs (cons items acc)))
+                         (t nil))))))
+    (let ((data (collect (progn (scan-range :length n) items))))
+      (lambda ()
+        (prog1 (mapcar #'car data)
+          (setf data
+                (next data nil)))))))
+
+(series::defS scan-combination (n items)
+  "(scan-combination n items)"
+  (series::fragl
+   ;; args
+   ((n) (items))
+   ;; rets
+   ((item t))
+   ;; aux
+   ((item t)
+    (f t (scan-combination-generator n items)))
+   ;; alt
+   ()
+   ;; prolog
+   ()
+   ;; body
+   ((setq item (funcall f))
+    (if (null item) (go series::end)))
+   ;; epilog
+   ()
+   ;; wraprs
+   ()
+   ;; impure
+   nil))
