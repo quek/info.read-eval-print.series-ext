@@ -24,4 +24,4 @@
                            #:scan-combination)))))
   (m))
 
-(series::install :pkg :info.read-eval-print.series-ext :implicit-map t)
+(series::install :pkg :info.read-eval-print.series-ext :implicit-map t :macro nil)
