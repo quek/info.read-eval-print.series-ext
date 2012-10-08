@@ -3,6 +3,7 @@
   :version "0.0.0"
   :serial t
   :components ((:file "package")
+               (:file "generic")
                (:file "fset")
                (:file "series-ext"))
   :depends-on (series
