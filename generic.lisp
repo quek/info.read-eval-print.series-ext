@@ -3,6 +3,20 @@
 (defgeneric scan% (thing))
 
 (defun scan* (thing)
+  "(defstruct st
+  (value 'a)
+  (next nil))
+
+(defmethod scan% ((st st))
+  (lambda ()
+    (if st
+        (let ((x st))
+          (setf st (st-next st))
+          (values x t))
+        (values nil nil))))
+
+(collect (st-value (scan* (make-st :value 1 :next (make-st :value 2 :next (make-st :value 3))))))
+;⇒ (1 2 3)"
   (declare (optimizable-series-function))
   (producing (z) ((f (scan% thing)) x)
     (loop
