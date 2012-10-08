@@ -1,13 +1,13 @@
 (in-package :info.read-eval-print.series-ext)
 
-(defgeneric scan% (thing))
+(defgeneric scan% (thing &key &allow-other-keys))
 
 (defun scan* (thing)
   "(defstruct st
   (value 'a)
   (next nil))
 
-(defmethod scan% ((st st))
+(defmethod scan% ((st st) &key)
   (lambda ()
     (if st
         (let ((x st))
@@ -28,7 +28,7 @@
            (setq x v))
          (next-out z x)))))
 
-(defmethod scan% ((ting list))
+(defmethod scan% ((ting list) &key)
   (let ((x ting))
     (lambda ()
       (if x
@@ -37,7 +37,7 @@
             (values car t))
           (values nil nil)))))
 
-(defmethod scan% ((thing array))
+(defmethod scan% ((thing array) &key)
   (let ((i 0)
         (len (length thing)))
     (lambda ()
