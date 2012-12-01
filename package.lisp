@@ -9,7 +9,6 @@
                   (:import-from :series ,@series-symbols)
                   (:export ,@series-symbols
                            #:scan*
-                           #:scan%
                            #:scan-directory
                            #:scan-split
                            #:progs

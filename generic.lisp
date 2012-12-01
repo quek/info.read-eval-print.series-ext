@@ -20,6 +20,7 @@
      ((setq f scan%))
      ;; body
      ((multiple-value-bind (v p) (funcall f)
+        (declare (ignorable v))
         (unless p
           (go series::end))
         (setq value v)))
@@ -48,6 +49,9 @@
           (let ((v (aref thing i)))
             (incf i)
             (values v t))))))
+
+(defmethod scan% ((thing symbol) &rest args &key)
+  (apply #'scan% (find-class thing) args))
 
 #|
 (collect (scan* #(1 2 3)))
