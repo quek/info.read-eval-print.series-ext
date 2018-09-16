@@ -15,9 +15,7 @@
                            #:scan-char-range
                            #:scan-file*
                            #:sdefpackage
-                           #:scan-fset
                            #:scan-map
-                           #:collect-fset
                            #:collect-map
                            #:scan-file-change
                            #:scan-apply

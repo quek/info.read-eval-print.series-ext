@@ -257,55 +257,6 @@ Evaluation took:
        (:shadowing-import-from :series ,@series::/series-forms/))
      (series::install :pkg ,package :implicit-map t :macro nil)))
 
-(defun collect-file-write-date-map (path)
-  (let ((file (scan-directory path)))
-    (collect-map file (file-write-date file))))
-
-(series::defS scan-file-change (path &key (interval 1))
-  "(scan-file-change path [:interval 1])"
-  (series::fragl
-   ;; args
-   ((path) (interval))
-   ;; rets
-   ((file t))
-   ;; aux
-   ((map fset:map)
-    (file t)
-    (new-wirte-date t)
-    (old-write-date t)
-    (files t))
-   ;; alt
-   ()
-   ;; prolog
-   ((setq map (collect-file-write-date-map path))
-    (sleep interval)
-    (setq files (generator (scan-directory path))))
-   ;; body
-   (L
-    (setq file (next-in files
-                        (sleep interval)
-                        (setq files (generator (scan-directory path)))
-                        (next-in files)))
-    (setq old-write-date (fset:@ map file))
-    (setq new-wirte-date (ignore-errors (file-write-date file)))
-    (if (and old-write-date new-wirte-date
-             (= old-write-date new-wirte-date))
-        (go L)
-        (setq map (fset:with map file new-wirte-date))))
-   ;; epilog
-   ()
-   ;; wraprs
-   ()
-   ;; impure
-   nil))
-#|
-(collect-ignore
- (subseries (format t "~&~a !!!!!!!!!!!!" (scan-file-change "/tmp/*.*"))
-            0 3))
-(collect (subseries (scan-file-change "/tmp/*.*") 0 3))
-;;=> (#P"/tmp/a.txt" #P"/tmp/.#a.txt" #P"/tmp/a.txt")
-|#
-
 
 (series::defS scan-apply (function &rest args)
   "(scan-funcall function &rest args)"
